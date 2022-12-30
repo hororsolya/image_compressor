@@ -1,9 +1,8 @@
 import os
 from re import A
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 import shutil
 import time
-from PIL import UnidentifiedImageError
 
 FILE_COUNTER = 0
 def resize(fileObject):
@@ -17,13 +16,13 @@ def resize(fileObject):
 		minHeight = 1920
 
 	if width<minWidth or height<minHeight:
-		return fileObject
+		return None
 	else:
 		widthRatio = width/minWidth
 		heightRatio = height/minHeight
 		ratio = min(widthRatio,heightRatio)
 
-		fileObject = fileObject.resize((int(fileObject.size[0]/ratio),int(fileObject.size[1]/ratio)),Image.ANTIALIAS)
+		fileObject = fileObject.resize((int(fileObject.size[0]/ratio),int(fileObject.size[1]/ratio)),Image.Resampling.LANCZOS)
 	return fileObject
 
 def createFolderForFile(savedFilePath):
@@ -37,9 +36,14 @@ def saveImage(filePath,savedFilePath):
 	except UnidentifiedImageError:
 		saveFile(filePath,savedFilePath)
 		return
+	
 	fileObject = resize(fileObject)
-	createFolderForFile(savedFilePath)
-	fileObject.save(savedFilePath, optimize=True, quality=95)
+	if fileObject is None:
+		saveFile(filePath,savedFilePath)
+		return
+	else:
+		createFolderForFile(savedFilePath)
+		fileObject.save(savedFilePath, optimize=True, quality=90, lossless=False)
 
 def saveFile(filePath,savedFilePath):
 	createFolderForFile(savedFilePath)
