@@ -43,7 +43,7 @@ def saveImage(filePath,savedFilePath):
 		return
 	else:
 		createFolderForFile(savedFilePath)
-		fileObject.save(savedFilePath, optimize=True, quality=90, lossless=False)
+		fileObject.save(savedFilePath, optimize=True, quality=80, lossless=False)
 
 def saveFile(filePath,savedFilePath):
 	createFolderForFile(savedFilePath)
@@ -60,7 +60,7 @@ def saveAllImages(path, rootPath, newRootPath):
 			_, fileExtension = os.path.splitext(fullPath)
 
 			newPath = fullPath.replace(rootPath,newRootPath)
-			if fileExtension in ['.jpg','.jpeg','.png']:
+			if fileExtension.upper() in ['.JPG','.JPEG','.PNG']:
 				saveImage(fullPath,newPath)
 			else:
 				saveFile(fullPath,newPath)
