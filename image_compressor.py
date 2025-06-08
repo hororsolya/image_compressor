@@ -1,9 +1,11 @@
 import os
 from re import A
 from PIL import Image, UnidentifiedImageError
+from pillow_heif import register_heif_opener
 import shutil
 import time
 
+register_heif_opener()
 FILE_COUNTER = 0
 def resize(fileObject):
 	width, height = fileObject.size
@@ -43,7 +45,7 @@ def saveImage(filePath,savedFilePath):
 		return
 	else:
 		createFolderForFile(savedFilePath)
-		fileObject.save(savedFilePath, optimize=True, quality=80, lossless=False)
+		fileObject.save(savedFilePath, format='jpeg', optimize=True, quality=80, lossless=False)
 
 def saveFile(filePath,savedFilePath):
 	createFolderForFile(savedFilePath)
@@ -61,6 +63,9 @@ def saveAllImages(path, rootPath, newRootPath):
 
 			newPath = fullPath.replace(rootPath,newRootPath)
 			if fileExtension.upper() in ['.JPG','.JPEG','.PNG']:
+				saveImage(fullPath,newPath)
+			elif fileExtension.upper() in ['.HEIC']:
+				newPath = newPath.replace('.HEIC','.jpeg')
 				saveImage(fullPath,newPath)
 			else:
 				saveFile(fullPath,newPath)
